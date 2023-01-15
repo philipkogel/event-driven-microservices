@@ -13,6 +13,37 @@ services:
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
 
+  backend-ambassador:
+    build:
+      context: ./apps/ambassador
+      args:
+        - DEV=true
+    ports:
+      - 8001:8001
+    volumes:
+      - ./apps/ambassador:/apps/ambassador
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8001"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+      - DEBUG=1
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:
@@ -43,3 +74,6 @@ services:
       KAFKA_BROKERCONNECT: kafka:9092
     depends_on:
       - kafka
+
+volumes:
+  dev-db-data:
