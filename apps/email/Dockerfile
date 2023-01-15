@@ -4,7 +4,7 @@ LABEL maintainer="philipkogel"
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /apps/email/requirements.txt
-COPY ./apps/email /apps/email
+COPY ./ /apps/email
 
 WORKDIR /apps/email
 

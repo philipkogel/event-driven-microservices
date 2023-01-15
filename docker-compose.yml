@@ -3,7 +3,7 @@ version: '3.9'
 services:
   backend-email:
     build:
-      context: /apps/email
+      context: ./apps/email
       args:
         - DEV=true
     ports:
