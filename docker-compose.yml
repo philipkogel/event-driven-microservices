@@ -10,8 +10,10 @@ services:
       - 8000:8000
     volumes:
       - ./apps/email:/apps/email
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+    # command: >
+    #   sh -c "python3 consumer.py"
+    depends_on:
+      - kafka
 
   backend-ambassador:
     build:
