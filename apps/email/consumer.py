@@ -1,9 +1,14 @@
 """
 Apache Kafka consumer
 """
-
+import os, django
 from kafka3 import KafkaConsumer
 from json import loads
+from django.core.mail import send_mail
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
+django.setup()
+
 
 # To consume latest messages and auto-commit offsets
 consumer = KafkaConsumer('default',
@@ -16,4 +21,21 @@ consumer = KafkaConsumer('default',
 
 for message in consumer:
     message = message.value
-    print('{} consumed'.format(message))
+    print('Recived message {}'.format(message))
+
+    order = loads(message)
+
+    # Admin Email
+    send_mail(
+        subject='An Order has been completed',
+        message='Order #' + str(order["id"]) + 'with a total of $' + str(order["admin_revenue"]) + ' has been completed!',
+        from_email='from@email.com',
+        recipient_list=['admin@admin.com']
+    )
+
+    send_mail(
+        subject='An Order has been completed',
+        message='You earned $' + str(order["ambassador_revenue"]) + ' from the link #' + order["code"],
+        from_email='from@email.com',
+        recipient_list=[order["ambassador_email"]]
+    )
