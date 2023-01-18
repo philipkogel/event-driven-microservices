@@ -10,8 +10,6 @@ services:
       - 8000:8000
     volumes:
       - ./apps/email:/apps/email
-    # command: >
-    #   sh -c "python3 consumer.py"
     depends_on:
       - kafka
 
@@ -50,6 +48,28 @@ services:
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8002"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+      - DEBUG=1
+    depends_on:
+      - db
+
+  backend-users:
+    build:
+      context: ./apps/users
+      args:
+        - DEV=true
+    ports:
+      - 8003:8003
+    volumes:
+      - ./apps/users:/apps/users
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8003"
     environment:
       - DB_HOST=db
       - DB_NAME=devdb
