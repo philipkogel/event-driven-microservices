@@ -10,8 +10,6 @@ services:
       - 8000:8000
     volumes:
       - ./apps/email:/apps/email
-    # command: >
-    #   sh -c "python3 consumer.py"
     depends_on:
       - kafka
 
@@ -29,13 +27,13 @@ services:
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8001"
     environment:
-      - DB_HOST=db
-      - DB_NAME=devdb
+      - DB_HOST=db-ambassador
+      - DB_NAME=dbambassador
       - DB_USER=devuser
       - DB_PASS=changeme
       - DEBUG=1
     depends_on:
-      - db
+      - db-ambassador
 
   backend-checkout:
     build:
@@ -51,22 +49,68 @@ services:
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8002"
     environment:
-      - DB_HOST=db
-      - DB_NAME=devdb
+      - DB_HOST=db-checkout
+      - DB_NAME=dbcheckout
       - DB_USER=devuser
       - DB_PASS=changeme
       - DEBUG=1
     depends_on:
-      - db
+      - db-checkout
 
-  db:
+  backend-users:
+    build:
+      context: ./apps/users
+      args:
+        - DEV=true
+    ports:
+      - 8003:8003
+    volumes:
+      - ./apps/users:/apps/users
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8003"
+    environment:
+      - DB_HOST=db-users
+      - DB_NAME=dbusers
+      - DB_USER=devuser
+      - DB_PASS=changeme
+      - DEBUG=1
+    depends_on:
+      - db-users
+
+  db-checkout:
     image: postgres:13-alpine
     volumes:
-      - dev-db-data:/var/lib/postgresql/data
+      - dev-db-checkout-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=devdb
+      - POSTGRES_DB=dbcheckout
       - POSTGRES_USER=devuser
       - POSTGRES_PASSWORD=changeme
+    ports:
+      - 5432:5432
+
+  db-users:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-users-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=dbusers
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+    ports:
+      - 5433:5432
+
+  db-ambassador:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-ambassador-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=dbambassador
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+    ports:
+      - 5434:5432
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -100,4 +144,6 @@ services:
       - kafka
 
 volumes:
-  dev-db-data:
+  dev-db-checkout-data:
+  dev-db-users-data:
+  dev-db-ambassador-data:
