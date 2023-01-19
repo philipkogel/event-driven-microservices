@@ -8,7 +8,7 @@ COPY ./ /apps/users
 
 WORKDIR /apps/users
 
-EXPOSE 8000
+EXPOSE 8003
 
 ARG DEV=false
 RUN python -m venv /py && \

@@ -22,6 +22,17 @@ class UserManager(BaseUserManager):
 
     return user
 
+  def create_superuser(self, email: str, password: str = None):
+    """Create and return a new superuser."""
+    user = self.create_user(email=email, password=password)
+    user.is_admin = True
+    user.is_staff = True
+    user.is_ambassador = True
+    user.is_superuser = True
+    user.save(using=self.db)
+
+    return user
+
 class User(AbstractUser):
   first_name = models.CharField(max_length=255)
   last_name = models.CharField(max_length=255)
