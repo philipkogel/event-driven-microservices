@@ -5,10 +5,9 @@ Django command to populate ambasadors with faker.
 from django.core.management import BaseCommand
 from django.db import connections
 from django.db.utils import OperationalError
-import time
 from faker import Faker
 
-from models import User
+from core.models import User
 
 
 class Command(BaseCommand):
