@@ -34,20 +34,65 @@ class LoginUserView(views.APIView):
     response = Response()
     response.set_cookie(key='jwt', value=token, httponly=True)
     response.data = {
+      'jwt': token,
+    }
+
+    return response
+
+
+class BaseUserAuthenticatedView(views.APIView):
+    """Base User View."""
+    authentication_class = [JWTAuthentication]
+    permission_class = [IsAuthenticated]
+
+
+class UserView(BaseUserAuthenticatedView):
+    """Retrive and return user."""
+
+    def get(self, request):
+      """Return user."""
+      return Response(UserSerializer(request.data).data)
+
+class UserLogoutView(BaseUserAuthenticatedView):
+  """Manage user logout."""
+
+  def post(self, _):
+    """Handle user logout."""
+    response = Response()
+    response.delete_cookie(key='jwt')
+    response.data = {
       'message': 'success'
     }
 
     return response
 
 
-  class UserView(views.APIView):
-    """Retrive and return user."""
-    authentication_class = [JWTAuthentication]
-    permission_class = [IsAuthenticated]
+class UserProfileInfoView(BaseUserAuthenticatedView):
+  """View for user profile info update."""
 
-    def get(self, request):
-      """Return user."""
-      user = request.data
-      data = UserSerializer(user).data
+  def put(self, request, pk=None):
+    """User profile info update"""
+    user = request.data
+    serializer = UserSerializer(user, data=user, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
 
-      return Response(data)
+    return Response(serializer.data)
+
+
+class UserPasswordView(BaseUserAuthenticatedView):
+  """View for user password update."""
+
+  def put(self, request, pk=None):
+    """User password update."""
+    user = request.user
+    data = request.data
+
+    if data['password'] != data['password_confirm']:
+      raise exceptions.APIException('Passwords do not match')
+
+    user.set_password(data['password'])
+    user.save()
+
+    return Response(UserSerializer(user).data)
+

@@ -1,9 +1,11 @@
 """Views for ambassador API"""
 
+from rest_framework import views
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from json import dumps
 from kafka3 import KafkaProducer
+import requests
 
 @api_view(['POST'])
 def confirm(request):
@@ -15,3 +17,16 @@ def confirm(request):
       data = {'number' : 100}
       producer.send('default', value=data)
     return Response({'number': data["number"]})
+
+
+class CreateView(views.APIView):
+  """Register Ambasador View"""
+
+  def post(self, request):
+    """Register ambasador"""
+    data = request.data
+    data['is_ambassador'] = 'api/ambasadaor' in request.path
+
+    response = requests.post('http://host.docker.internal:8003/api/user/create/', data)
+
+    return Response(response.json())

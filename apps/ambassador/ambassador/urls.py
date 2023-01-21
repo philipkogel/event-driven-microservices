@@ -15,4 +15,5 @@ app_name = 'ambassador'
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('create/', views.CreateView.as_view(), name='ambassador')
 ]
