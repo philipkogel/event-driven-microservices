@@ -30,3 +30,20 @@ class CreateView(views.APIView):
     response = requests.post('http://host.docker.internal:8003/api/user/create/', data)
 
     return Response(response.json())
+
+
+class LoginView(views.APIView):
+  def post(self, request):
+    data = request.data
+    data['scope'] = 'ambasador' if 'api/amabasador' in request.path else 'admin'
+
+
+    res = requests.post('http://host.docker.internal:8003/api/user/login/', data).json()
+
+    response = Response()
+    response.set_cookie(key='jwt', value=res['jwt'], httponly=True)
+    response.data = {
+      'message': 'success',
+    }
+
+    return response

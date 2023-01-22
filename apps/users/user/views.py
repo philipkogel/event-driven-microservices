@@ -21,8 +21,7 @@ class LoginUserView(views.APIView):
     email = request.data['email']
     password = request.data['password']
     scope = request.data['scope']
-
-    user: User = User.objects().filter(email=email).first()
+    user = User.objects.filter(email=email).first()
 
     if user is None:
       raise exceptions.AuthenticationFailed('User not found.')
@@ -31,13 +30,10 @@ class LoginUserView(views.APIView):
       raise exceptions.AuthenticationFailed('Incorrect password.')
 
     token = JWTAuthentication.generate_jwt(user.id, scope)
-    response = Response()
-    response.set_cookie(key='jwt', value=token, httponly=True)
-    response.data = {
-      'jwt': token,
-    }
 
-    return response
+    return Response({
+      'jwt': token,
+    })
 
 
 class BaseUserAuthenticatedView(views.APIView):
