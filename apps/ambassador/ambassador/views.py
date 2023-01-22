@@ -9,7 +9,7 @@ import requests
 
 @api_view(['POST'])
 def confirm(request):
-    """Returns successful confirm."""
+    """Returns successful confirm via kafka."""
     producer = KafkaProducer(bootstrap_servers=['kafka:9092'],
                          value_serializer=lambda x:
                          dumps(x).encode('utf-8'))
@@ -20,12 +20,12 @@ def confirm(request):
 
 
 class CreateView(views.APIView):
-  """Register Ambasador View"""
+  """Register Ambassador View"""
 
   def post(self, request):
-    """Register ambasador"""
+    """Register ambassador"""
     data = request.data
-    data['is_ambassador'] = 'api/ambasadaor' in request.path
+    data['is_ambassador'] = True
 
     response = requests.post('http://host.docker.internal:8003/api/user/create/', data)
 
@@ -35,7 +35,7 @@ class CreateView(views.APIView):
 class LoginView(views.APIView):
   def post(self, request):
     data = request.data
-    data['scope'] = 'ambasador' if 'api/amabasador' in request.path else 'admin'
+    data['scope'] = 'ambassador'
 
 
     res = requests.post('http://host.docker.internal:8003/api/user/login/', data).json()

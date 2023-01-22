@@ -17,7 +17,6 @@ class UserManager(BaseUserManager):
     user.set_password(password)
     user.is_admin=False
     user.is_staff=False
-    user.is_ambassador=False
     user.save(using=self.db)
 
     return user
