@@ -47,3 +47,12 @@ class LoginView(views.APIView):
     }
 
     return response
+
+class UserView(views.APIView):
+    """Retrive and return user."""
+
+    def get(self, request):
+      """Return user from internal User API."""
+      response = requests.get('http://host.docker.internal:8003/api/user/', headers=request.headers).json()
+
+      return Response(response)

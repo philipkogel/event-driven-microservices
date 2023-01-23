@@ -38,8 +38,8 @@ class LoginUserView(views.APIView):
 
 class BaseUserAuthenticatedView(views.APIView):
     """Base User View."""
-    authentication_class = [JWTAuthentication]
-    permission_class = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class UserView(BaseUserAuthenticatedView):
@@ -47,7 +47,7 @@ class UserView(BaseUserAuthenticatedView):
 
     def get(self, request):
       """Return user."""
-      return Response(UserSerializer(request.data).data)
+      return Response(UserSerializer(request.user).data)
 
 class UserLogoutView(BaseUserAuthenticatedView):
   """Manage user logout."""
