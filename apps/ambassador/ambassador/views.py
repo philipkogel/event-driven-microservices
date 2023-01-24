@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from json import dumps
 from kafka3 import KafkaProducer
-import requests
+from ambassador.services import UserService
 
 @api_view(['POST'])
 def confirm(request):
@@ -27,9 +27,7 @@ class CreateView(views.APIView):
     data = request.data
     data['is_ambassador'] = True
 
-    response = requests.post('http://host.docker.internal:8003/api/user/create/', data)
-
-    return Response(response.json())
+    return Response(UserService.post('create', data=data))
 
 
 class LoginView(views.APIView):
@@ -37,8 +35,7 @@ class LoginView(views.APIView):
     data = request.data
     data['scope'] = 'ambassador'
 
-
-    res = requests.post('http://host.docker.internal:8003/api/user/login/', data).json()
+    res = UserService.post('login', data=data)
 
     response = Response()
     response.set_cookie(key='jwt', value=res['jwt'], httponly=True)
@@ -52,11 +49,10 @@ class LogoutView(views.APIView):
   """Logout Ambassador View"""
   def post(self, request):
     """Logout endpoint."""
-    requests.post('http://host.docker.internal:8003/api/user/logout/', headers=request.headers)
+    UserService.post('logout', headers=request.headers)
 
     response = Response()
     response.delete_cookie(key='jwt')
-
     response.data = {
       'message': 'success',
     }
@@ -68,6 +64,4 @@ class UserView(views.APIView):
 
     def get(self, request):
       """Return user from internal User API."""
-      response = requests.get('http://host.docker.internal:8003/api/user/', headers=request.headers).json()
-
-      return Response(response)
+      return Response(UserService.get('', headers=request.headers))
