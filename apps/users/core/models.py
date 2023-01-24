@@ -49,3 +49,11 @@ class User(AbstractUser):
   def name(self):
     """Return users full name"""
     return f"{self.first_name} {self.last_name}"
+
+
+class UserToken(models.Model):
+  """Manage user token."""
+  user_id = models.IntegerField()
+  token = models.CharField(max_length=255)
+  created_at = models.DateField(auto_now_add=True)
+  expired_at = models.DateField()

@@ -30,6 +30,10 @@ class LoginUserView(views.APIView):
       raise exceptions.AuthenticationFailed('Incorrect password.')
 
     token = JWTAuthentication.generate_jwt(user.id, scope)
+    JWTAuthentication.create_user_token(
+      user_id=user.id,
+      token=token
+    )
 
     return Response({
       'jwt': token,
@@ -52,15 +56,14 @@ class UserView(BaseUserAuthenticatedView):
 class UserLogoutView(BaseUserAuthenticatedView):
   """Manage user logout."""
 
-  def post(self, _):
+  def post(self, request):
     """Handle user logout."""
-    response = Response()
-    response.delete_cookie(key='jwt')
-    response.data = {
-      'message': 'success'
-    }
+    print(request.user)
+    JWTAuthentication.delete_token(user_id=request.user.id)
 
-    return response
+    return Response({
+      'message': 'success'
+    })
 
 
 class UserProfileInfoView(BaseUserAuthenticatedView):

@@ -48,6 +48,21 @@ class LoginView(views.APIView):
 
     return response
 
+class LogoutView(views.APIView):
+  """Logout Ambassador View"""
+  def post(self, request):
+    """Logout endpoint."""
+    requests.post('http://host.docker.internal:8003/api/user/logout/', headers=request.headers)
+
+    response = Response()
+    response.delete_cookie(key='jwt')
+
+    response.data = {
+      'message': 'success',
+    }
+
+    return response
+
 class UserView(views.APIView):
     """Retrive and return user."""
 
