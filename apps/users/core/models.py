@@ -17,7 +17,6 @@ class UserManager(BaseUserManager):
     user.set_password(password)
     user.is_admin=False
     user.is_staff=False
-    user.is_ambassador=False
     user.save(using=self.db)
 
     return user
@@ -51,7 +50,10 @@ class User(AbstractUser):
     """Return users full name"""
     return f"{self.first_name} {self.last_name}"
 
-  # @property
-  # def revenue(self):
-  #   """Return users revenue"""
-  #   orders =
+
+class UserToken(models.Model):
+  """Manage user token."""
+  user_id = models.IntegerField()
+  token = models.CharField(max_length=255)
+  created_at = models.DateField(auto_now_add=True)
+  expired_at = models.DateField()

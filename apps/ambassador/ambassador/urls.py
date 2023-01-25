@@ -14,5 +14,10 @@ router = DefaultRouter()
 app_name = 'ambassador'
 
 urlpatterns = [
-    path('', include(router.urls)),
+    # path('', include(router.urls)),
+    path('create/', views.CreateView.as_view(), name='ambassador'),
+    path('login/', views.LoginView.as_view(), name='ambassador'),
+    path('logout/', views.LogoutView.as_view(), name='ambassador'),
+    path('', views.UserView.as_view(), name='ambassador'),
+    path('password/', views.ProfilePasswordView.as_view(), name='ambassador'),
 ]
