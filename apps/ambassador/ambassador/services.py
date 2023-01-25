@@ -16,6 +16,7 @@ class UserService:
 
   @staticmethod
   def get(path: str, **kwargs):
+    """Send HTTP GET request."""
     headers = kwargs.get('headers', None)
     return requests.get(
       UserService.__generate_path(path=path),
@@ -24,9 +25,21 @@ class UserService:
 
   @staticmethod
   def post(path: str, **kwargs):
+    """Send HTTP POST request."""
     headers = kwargs.get('headers', None)
     data = kwargs.get('data', None)
     return requests.post(
+      UserService.__generate_path(path=path),
+      data=data,
+      headers=headers,
+    ).json()
+
+  @staticmethod
+  def put(path: str, **kwargs):
+    """Send HTTP PUT request."""
+    headers = kwargs.get('headers', None)
+    data = kwargs.get('data', None)
+    return requests.put(
       UserService.__generate_path(path=path),
       data=data,
       headers=headers,

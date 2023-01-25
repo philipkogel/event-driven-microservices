@@ -68,7 +68,7 @@ class UserLogoutView(BaseUserAuthenticatedView):
 
 class UserProfileInfoView(BaseUserAuthenticatedView):
   """View for user profile info update."""
-
+  """TODO: Move logic to UserView"""
   def put(self, request, pk=None):
     """User profile info update"""
     user = request.data

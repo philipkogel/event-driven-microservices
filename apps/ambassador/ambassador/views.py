@@ -65,3 +65,15 @@ class UserView(views.APIView):
     def get(self, request):
       """Return user from internal User API."""
       return Response(UserService.get('', headers=request.headers))
+
+    def put(self, request, pk=None):
+      """User profile info update"""
+      return Response(UserService.put('', data=request.data, headers=request.headers))
+
+
+class ProfilePasswordView(views.APIView):
+  """Manage profile view."""
+
+  def put(self, request, pk=None):
+    """User profile info update"""
+    return Response(UserService.put('/password', data=request.data, headers=request.headers))
