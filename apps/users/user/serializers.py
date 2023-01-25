@@ -31,3 +31,15 @@ class UserSerializer(serializers.ModelSerializer):
     user.save()
 
     return user
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
+  """User Info object serializer."""
+  class Meta:
+    model = get_user_model()
+    fields = ['id', 'first_name', 'last_name', 'email', 'is_ambassador']
+    read_only_fields = ['id', 'is_ambassador']
+
+    def update(self, instance, validated_data):
+      """Update and return user."""
+      return super().update(instance, validated_data)

@@ -1,7 +1,7 @@
 """ Services for ambassador app."""
 
 import requests
-
+import json
 
 class UserService:
   endpoint = 'http://host.docker.internal:8003/api/user/'
@@ -41,6 +41,6 @@ class UserService:
     data = kwargs.get('data', None)
     return requests.put(
       UserService.__generate_path(path=path),
-      data=data,
+      data=json.dumps(data),
       headers=headers,
     ).json()

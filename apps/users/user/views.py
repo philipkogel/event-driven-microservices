@@ -4,7 +4,7 @@ from rest_framework import generics, views
 from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from user.serializers import UserSerializer
+from user.serializers import UserSerializer, UserInfoSerializer
 from core.models import User
 from user.authentication import JWTAuthentication
 
@@ -46,19 +46,19 @@ class BaseUserAuthenticatedView(views.APIView):
     permission_classes = [IsAuthenticated]
 
 
-class UserView(BaseUserAuthenticatedView):
-    """Retrive and return user."""
+class UserView(BaseUserAuthenticatedView, generics.RetrieveUpdateAPIView):
+    """Manage the authenticated user."""
+    serializer_class = UserInfoSerializer
 
-    def get(self, request):
-      """Return user."""
-      return Response(UserSerializer(request.user).data)
+    def get_object(self):
+      """Retrive and return the authenticated user."""
+      return self.request.user
 
 class UserLogoutView(BaseUserAuthenticatedView):
   """Manage user logout."""
 
   def post(self, request):
     """Handle user logout."""
-    print(request.user)
     JWTAuthentication.delete_token(user_id=request.user.id)
 
     return Response({
@@ -66,19 +66,7 @@ class UserLogoutView(BaseUserAuthenticatedView):
     })
 
 
-class UserProfileInfoView(BaseUserAuthenticatedView):
-  """View for user profile info update."""
-  """TODO: Move logic to UserView"""
-  def put(self, request, pk=None):
-    """User profile info update"""
-    user = request.data
-    serializer = UserSerializer(user, data=user, partial=True)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-
-    return Response(serializer.data)
-
-
+"""TODO: Serializer for password update?"""
 class UserPasswordView(BaseUserAuthenticatedView):
   """View for user password update."""
 
