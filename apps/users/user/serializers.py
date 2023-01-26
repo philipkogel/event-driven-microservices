@@ -43,3 +43,9 @@ class UserInfoSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
       """Update and return user."""
       return super().update(instance, validated_data)
+
+
+class UserPasswordUpdateSerializer(serializers.Serializer):
+  """User Password object serializer."""
+  password = serializers.CharField()
+  password_confirm = serializers.CharField()

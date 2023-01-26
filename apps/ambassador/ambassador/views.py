@@ -76,4 +76,4 @@ class ProfilePasswordView(views.APIView):
 
   def put(self, request, pk=None):
     """User profile info update"""
-    return Response(UserService.put('/password', data=request.data, headers=request.headers))
+    return Response(UserService.put('password', data=request.data, headers=request.headers))

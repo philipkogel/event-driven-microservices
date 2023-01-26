@@ -4,7 +4,7 @@ from rest_framework import generics, views
 from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from user.serializers import UserSerializer, UserInfoSerializer
+from user.serializers import UserSerializer, UserInfoSerializer, UserPasswordUpdateSerializer
 from core.models import User
 from user.authentication import JWTAuthentication
 
@@ -66,9 +66,10 @@ class UserLogoutView(BaseUserAuthenticatedView):
     })
 
 
-"""TODO: Serializer for password update?"""
-class UserPasswordView(BaseUserAuthenticatedView):
+class UserPasswordView(BaseUserAuthenticatedView, generics.UpdateAPIView):
   """View for user password update."""
+  allowed_methods = ['PUT']
+  serializer_class = UserPasswordUpdateSerializer
 
   def put(self, request, pk=None):
     """User password update."""
