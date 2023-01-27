@@ -1,10 +1,10 @@
 """Views for User API."""
 
-from rest_framework import generics, views
+from rest_framework import generics, views, mixins, viewsets
 from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from user.serializers import UserSerializer, UserInfoSerializer
+from user.serializers import UserSerializer, UserInfoSerializer, UserPasswordUpdateSerializer
 from core.models import User
 from user.authentication import JWTAuthentication
 
@@ -54,6 +54,19 @@ class UserView(BaseUserAuthenticatedView, generics.RetrieveUpdateAPIView):
       """Retrive and return the authenticated user."""
       return self.request.user
 
+class UserListView(
+  BaseUserAuthenticatedView,
+  generics.ListAPIView,
+  ):
+    """Manage the authenticated user."""
+    serializer_class = UserInfoSerializer
+    queryset = User.objects.all()
+
+    def get_queryset(self):
+      """Return all users."""
+      print(self)
+      return self.queryset.order_by('-id')
+
 class UserLogoutView(BaseUserAuthenticatedView):
   """Manage user logout."""
 
@@ -66,9 +79,10 @@ class UserLogoutView(BaseUserAuthenticatedView):
     })
 
 
-"""TODO: Serializer for password update?"""
-class UserPasswordView(BaseUserAuthenticatedView):
+class UserPasswordView(BaseUserAuthenticatedView, generics.UpdateAPIView):
   """View for user password update."""
+  allowed_methods = ['PUT']
+  serializer_class = UserPasswordUpdateSerializer
 
   def put(self, request, pk=None):
     """User password update."""
@@ -83,3 +97,11 @@ class UserPasswordView(BaseUserAuthenticatedView):
 
     return Response(UserSerializer(user).data)
 
+class UsersViewSet(
+  mixins.ListModelMixin,
+  mixins.RetrieveModelMixin,
+  viewsets.GenericViewSet,
+):
+    """Manage users."""
+    serializer_class = UserInfoSerializer
+    queryset = User.objects.all()

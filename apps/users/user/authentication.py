@@ -60,7 +60,6 @@ class JWTAuthentication(BaseAuthentication):
   @staticmethod
   def delete_token(user_id: str) -> None:
     """Delete user token."""
-    print(user_id)
     try:
       UserToken.objects.filter(user_id=user_id).delete()
     except ProtectedError:
