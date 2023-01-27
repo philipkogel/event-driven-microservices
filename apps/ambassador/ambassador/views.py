@@ -77,3 +77,13 @@ class ProfilePasswordView(views.APIView):
   def put(self, request, pk=None):
     """User profile info update"""
     return Response(UserService.put('password', data=request.data, headers=request.headers))
+
+
+"""TODO: Might need to separate Views below into 'admin' app
+and add user filtering by is_ambassador bool."""
+class AmbassadorView(views.APIView):
+    """Manage ambassadors (Users)"""
+    def get(self, request):
+      """Return all ambassadors."""
+      ambassadors = UserService.get('', headers=request.headers, is_users_endpoint=True)
+      return Response(ambassadors)

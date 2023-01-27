@@ -5,21 +5,27 @@ import json
 
 class UserService:
   endpoint = 'http://host.docker.internal:8003/api/user/'
+  endpoint_users = 'http://host.docker.internal:8003/api/users/'
 
   @staticmethod
-  def __generate_path(path: str):
+  def __generate_path(path: str, is_users_endpoint: bool = False):
     """Generate endpoint path."""
-    if not path:
-      return UserService.endpoint
+    url = UserService.endpoint
+    if is_users_endpoint:
+      url = UserService.endpoint_users
 
-    return f'{UserService.endpoint}{path}/'
+    if not path:
+      return url
+
+    return f'{url}{path}/'
 
   @staticmethod
   def get(path: str, **kwargs):
     """Send HTTP GET request."""
     headers = kwargs.get('headers', None)
+    is_users_endpoint = kwargs.get('is_users_endpoint', False)
     return requests.get(
-      UserService.__generate_path(path=path),
+      UserService.__generate_path(path=path, is_users_endpoint=is_users_endpoint),
       headers=headers
     ).json()
 
