@@ -1,5 +1,6 @@
 """Views for User API."""
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, views, mixins, viewsets
 from rest_framework import exceptions
 from rest_framework.response import Response
@@ -100,3 +101,5 @@ class UsersViewSet(
     """Manage users."""
     serializer_class = UserInfoSerializer
     queryset = User.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['is_ambassador']

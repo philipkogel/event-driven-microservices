@@ -8,14 +8,17 @@ class UserService:
   endpoint_users = 'http://host.docker.internal:8003/api/users/'
 
   @staticmethod
-  def __generate_path(path: str, is_users_endpoint: bool = False):
+  def __generate_path(path: str, params: str = None,  is_users_endpoint: bool = False):
     """Generate endpoint path."""
     url = UserService.endpoint
     if is_users_endpoint:
       url = UserService.endpoint_users
 
     if not path:
-      return url
+      if params is not None:
+        return f'{url}{params}'
+      else:
+        return url
 
     return f'{url}{path}/'
 
@@ -24,8 +27,10 @@ class UserService:
     """Send HTTP GET request."""
     headers = kwargs.get('headers', None)
     is_users_endpoint = kwargs.get('is_users_endpoint', False)
+    params = kwargs.get('params', None)
+    print(params)
     return requests.get(
-      UserService.__generate_path(path=path, is_users_endpoint=is_users_endpoint),
+      UserService.__generate_path(path=path, params=params, is_users_endpoint=is_users_endpoint),
       headers=headers
     ).json()
 
