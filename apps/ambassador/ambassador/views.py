@@ -27,7 +27,7 @@ class CreateView(views.APIView):
     data = request.data
     data['is_ambassador'] = True
 
-    return Response(UserService.post('create', data=data))
+    return Response(UserService.post('', data=data, is_users_endpoint=True))
 
 
 class LoginView(views.APIView):
@@ -64,7 +64,7 @@ class UserView(views.APIView):
 
     def get(self, request):
       """Return user from internal User API."""
-      return Response(UserService.get('', headers=request.headers))
+      return Response(request.user_ms)
 
     def put(self, request, pk=None):
       """User profile info update"""
