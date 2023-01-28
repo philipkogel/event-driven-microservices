@@ -4,8 +4,8 @@ import requests
 import json
 
 class UserService:
-  endpoint = 'http://host.docker.internal:8003/api/user/'
-  endpoint_users = 'http://host.docker.internal:8003/api/users/'
+  endpoint = 'http://users-ms:8003/api/user/'
+  endpoint_users = 'http://users-ms:8003/api/users/'
 
   @staticmethod
   def __generate_path(path: str, params: str = None,  is_users_endpoint: bool = False):

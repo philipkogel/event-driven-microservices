@@ -35,6 +35,8 @@ services:
       - DEBUG=1
     depends_on:
       - db-ambassador
+    networks:
+      - common
 
   backend-checkout:
     build:
@@ -63,6 +65,7 @@ services:
       context: ./apps/users
       args:
         - DEV=true
+    container_name: users-ms
     ports:
       - 8003:8003
     volumes:
@@ -79,6 +82,8 @@ services:
       - DEBUG=1
     depends_on:
       - db-users
+    networks:
+      - users
 
   db-checkout:
     image: postgres:13-alpine
@@ -101,6 +106,8 @@ services:
       - POSTGRES_PASSWORD=changeme
     ports:
       - 5433:5432
+    networks:
+      - users
 
   db-ambassador:
     image: postgres:13-alpine
@@ -112,6 +119,8 @@ services:
       - POSTGRES_PASSWORD=changeme
     ports:
       - 5434:5432
+    networks:
+      - common
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -148,3 +157,9 @@ volumes:
   dev-db-checkout-data:
   dev-db-users-data:
   dev-db-ambassador-data:
+
+networks:
+  common:
+      name: users
+  users:
+    name: users
