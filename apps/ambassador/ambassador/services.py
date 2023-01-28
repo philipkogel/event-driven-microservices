@@ -34,8 +34,9 @@ class UserService:
     """Send HTTP POST request."""
     headers = kwargs.get('headers', None)
     data = kwargs.get('data', None)
+    is_users_endpoint = kwargs.get('is_users_endpoint', False)
     return requests.post(
-      UserService.__generate_path(path=path),
+      UserService.__generate_path(path=path, is_users_endpoint=is_users_endpoint),
       data=data,
       headers=headers,
     ).json()

@@ -46,26 +46,17 @@ class BaseUserAuthenticatedView(views.APIView):
     permission_classes = [IsAuthenticated]
 
 
-class UserView(BaseUserAuthenticatedView, generics.RetrieveUpdateAPIView):
+class UserView(
+    BaseUserAuthenticatedView,
+    generics.RetrieveUpdateAPIView
+):
     """Manage the authenticated user."""
+    allowed_methods = ['GET', 'PUT']
     serializer_class = UserInfoSerializer
 
     def get_object(self):
       """Retrive and return the authenticated user."""
       return self.request.user
-
-class UserListView(
-  BaseUserAuthenticatedView,
-  generics.ListAPIView,
-  ):
-    """Manage the authenticated user."""
-    serializer_class = UserInfoSerializer
-    queryset = User.objects.all()
-
-    def get_queryset(self):
-      """Return all users."""
-      print(self)
-      return self.queryset.order_by('-id')
 
 class UserLogoutView(BaseUserAuthenticatedView):
   """Manage user logout."""
@@ -79,7 +70,10 @@ class UserLogoutView(BaseUserAuthenticatedView):
     })
 
 
-class UserPasswordView(BaseUserAuthenticatedView, generics.UpdateAPIView):
+class UserPasswordView(
+  BaseUserAuthenticatedView,
+  generics.UpdateAPIView
+):
   """View for user password update."""
   allowed_methods = ['PUT']
   serializer_class = UserPasswordUpdateSerializer
@@ -101,6 +95,7 @@ class UsersViewSet(
   mixins.ListModelMixin,
   mixins.RetrieveModelMixin,
   viewsets.GenericViewSet,
+  BaseUserAuthenticatedView,
 ):
     """Manage users."""
     serializer_class = UserInfoSerializer
