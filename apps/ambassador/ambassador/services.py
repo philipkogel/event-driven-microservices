@@ -28,7 +28,6 @@ class UserService:
     headers = kwargs.get('headers', None)
     is_users_endpoint = kwargs.get('is_users_endpoint', False)
     params = kwargs.get('params', None)
-    print(params)
     return requests.get(
       UserService.__generate_path(path=path, params=params, is_users_endpoint=is_users_endpoint),
       headers=headers
