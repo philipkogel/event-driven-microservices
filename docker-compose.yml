@@ -38,6 +38,33 @@ services:
     networks:
       - common
 
+  backend-admin:
+    build:
+      context: ./apps/admin
+      args:
+        - DEV=true
+    ports:
+      - 8004:8004
+    restart: always
+    volumes:
+      - ./apps/admin:/apps/admin
+    # command: >
+    #   sh -c "python manage.py wait_for_db &&
+    #          python manage.py migrate &&
+    #          python manage.py runserver 0.0.0.0:8004"
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8004"
+    environment:
+      - DB_HOST=db-admin
+      - DB_NAME=dbadmin
+      - DB_USER=devuser
+      - DB_PASS=changeme
+      - DEBUG=1
+    depends_on:
+      - db-admin
+    networks:
+      - common
+
   backend-checkout:
     build:
       context: ./apps/checkout
@@ -122,6 +149,19 @@ services:
     networks:
       - common
 
+  db-admin:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-admin-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=dbadmin
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+    ports:
+      - 5435:5432
+    networks:
+      - common
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:
@@ -157,6 +197,7 @@ volumes:
   dev-db-checkout-data:
   dev-db-users-data:
   dev-db-ambassador-data:
+  dev-db-admin-data:
 
 networks:
   common:
