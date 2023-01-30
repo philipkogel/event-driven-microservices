@@ -6,6 +6,9 @@ from app import settings
 from core.models import User, UserToken
 
 
+SCOPE_AMBASSADOR = 'ambassador'
+SCOPE_ADMIN = 'admin'
+
 class JWTAuthentication(BaseAuthentication):
   """User authentication class."""
   def authenticate(self, request):
@@ -30,6 +33,14 @@ class JWTAuthentication(BaseAuthentication):
         expired_at__gt=datetime.datetime.utcnow()
       ).exists():
       raise exceptions.AuthenticationFailed('Unauthenticated')
+
+    in_ambassador_scope = user.is_ambassador and payload['scope'] == SCOPE_AMBASSADOR \
+                        and request.META['HTTP_HOST'] == 'localhost:8001'
+    in_admin_scope = not user.is_ambassador and payload['scope'] == SCOPE_ADMIN \
+                        and request.META['HTTP_HOST'] == 'TODO:admin-ms'
+
+    if not in_ambassador_scope or not in_admin_scope:
+      raise exceptions.AuthenticationFailed('Invalid Scope!')
 
 
     return (user, None)
