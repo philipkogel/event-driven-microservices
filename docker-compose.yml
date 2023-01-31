@@ -48,12 +48,10 @@ services:
     restart: always
     volumes:
       - ./apps/admin:/apps/admin
-    # command: >
-    #   sh -c "python manage.py wait_for_db &&
-    #          python manage.py migrate &&
-    #          python manage.py runserver 0.0.0.0:8004"
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8004"
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8004"
     environment:
       - DB_HOST=db-admin
       - DB_NAME=dbadmin
