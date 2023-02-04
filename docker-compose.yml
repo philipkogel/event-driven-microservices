@@ -20,7 +20,6 @@ services:
         - DEV=true
     ports:
       - 8001:8001
-    restart: always
     volumes:
       - ./apps/ambassador:/apps/ambassador
     command: >
@@ -45,7 +44,6 @@ services:
         - DEV=true
     ports:
       - 8004:8004
-    restart: always
     volumes:
       - ./apps/admin:/apps/admin
     command: >
